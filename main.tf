@@ -34,7 +34,7 @@ resource "azurerm_subnet" "newsubnet" {
     name                 = "Subnetdemo"
     resource_group_name  = azurerm_resource_group.rg.name
     virtual_network_name = azurerm_virtual_network.newvnet.name
-    address_prefixes     = ["10.0.1.0/24"]
+    address_prefixes     = ["10.0.0.0/24"]
 }
 
 #NICcard
@@ -97,10 +97,10 @@ resource "azurerm_subnet" "demobastion" {
   name                 = "AzureBastionSubnet"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.newvnet.name
-  address_prefixes     = ["10.0.1.0/24"]
+  address_prefixes     = ["10.0.0.0/27"]
 }
 resource "azurerm_public_ip" "pip" {
-  name                = "examplepip"
+  name                = "pip"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Static"
