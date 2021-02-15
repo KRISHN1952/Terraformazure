@@ -91,3 +91,44 @@ resource "azurerm_windows_virtual_machine" "server" {
   }
 
 }
+
+#Azure Bastion subnet
+resource "azurerm_subnet" "demobastion" {
+  name                 = "AzureBastionSubnet"
+  resource_group_name  = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.newvnet.name
+  address_prefixes     = ["10.0.1.0/24"]
+}
+resource "azurerm_public_ip" "pip" {
+  name                = "examplepip"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+resource "azurerm_bastion_host" "demobastion" {
+  name                = "examplebastion"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  ip_configuration {
+    name                 = "configuration"
+    subnet_id            = azurerm_subnet.demobastion.id
+    public_ip_address_id = azurerm_public_ip.pip.id
+  }
+}
+
+#Nat gateway
+resource "azurerm_nat_gateway" "demonat" {
+  name                    = "nat-Gateway"
+  location                = azurerm_resource_group.rg.location
+  resource_group_name     = azurerm_resource_group.rg.name
+  sku_name                = "Standard"
+  idle_timeout_in_minutes = 10
+  }
+#Nat gateway association to subnet
+resource "azurerm_subnet_nat_gateway_association" "demonat" {
+  subnet_id      = azurerm_subnet.newsubnet.id
+  nat_gateway_id = azurerm_nat_gateway.demonat.id
+}
